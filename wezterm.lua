@@ -116,6 +116,8 @@ config.keys = {
 		}),
 	},
 	{ key = "g", mods = "LEADER", action = wezterm.action.QuickSelect },
+	{ key = "u", mods = "CTRL", action = wezterm.action.ScrollByPage(-0.5) },
+	{ key = "d", mods = "CTRL", action = wezterm.action.ScrollByPage(0.5) },
 }
 
 config.quick_select_patterns = {
