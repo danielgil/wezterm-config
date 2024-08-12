@@ -115,6 +115,14 @@ config.keys = {
 			mods = "ALT",
 		}),
 	},
+	{ key = "g", mods = "LEADER", action = wezterm.action.QuickSelect },
+}
+
+config.quick_select_patterns = {
+	-- match eks node names
+	"(?:fargate-)?ip(?:-(?:[0-9]){1,3}){4}.ec2.internal",
+	-- match kubernetes pod names
+	"\\w+(?:-\\w+)+",
 }
 
 return config
