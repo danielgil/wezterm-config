@@ -16,7 +16,6 @@ config.color_scheme = "AdventureTime"
 config.font = wezterm.font("JetBrains Mono")
 config.font_size = 16
 
-local w = require("wezterm")
 local function is_vim(pane)
 	-- this is set by the plugin, and unset on ExitPre in Neovim
 	return pane:get_user_vars().IS_NVIM == "true"
@@ -33,19 +32,8 @@ local function split_nav(resize_or_move, key)
 	return {
 		key = key,
 		mods = resize_or_move == "resize" and "META" or "CTRL",
-		action = w.action_callback(function(win, pane)
-			if is_vim(pane) then
-				-- pass the keys through to vim/nvim
-				win:perform_action({
-					SendKey = { key = key, mods = resize_or_move == "resize" and "META" or "CTRL" },
-				}, pane)
-			else
-				if resize_or_move == "resize" then
-					win:perform_action({ AdjustPaneSize = { direction_keys[key], 3 } }, pane)
-				else
-					win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
-				end
-			end
+		action = wezterm.action_callback(function(win, pane)
+			win:perform_action({ ActivatePaneDirection = direction_keys[key] }, pane)
 		end),
 	}
 end
@@ -116,8 +104,36 @@ config.keys = {
 		}),
 	},
 	{ key = "g", mods = "LEADER", action = wezterm.action.QuickSelect },
-	{ key = "u", mods = "CTRL", action = wezterm.action.ScrollByPage(-0.5) },
-	{ key = "d", mods = "CTRL", action = wezterm.action.ScrollByPage(0.5) },
+	{
+		key = "u",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(win, pane)
+			if is_vim(pane) then
+				win:perform_action({
+					SendKey = { key = "u", mods = "CTRL" },
+				}, pane)
+			else
+				win:perform_action({
+					ScrollByPage = -0.5,
+				}, pane)
+			end
+		end),
+	},
+	{
+		key = "d",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(win, pane)
+			if is_vim(pane) then
+				win:perform_action({
+					SendKey = { key = "d", mods = "CTRL" },
+				}, pane)
+			else
+				win:perform_action({
+					ScrollByPage = 0.5,
+				}, pane)
+			end
+		end),
+	},
 }
 
 config.quick_select_patterns = {
